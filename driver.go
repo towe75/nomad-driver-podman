@@ -801,8 +801,8 @@ func (d *Driver) SignalTask(taskID string, signal string) error {
 
 // ExecTask function is used by the Nomad client to execute scripted health checks inside the task execution context.
 func (d *Driver) ExecTask(taskID string, cmd []string, timeout time.Duration) (*drivers.ExecTaskResult, error) {
-	handle, ok := d.tasks.Get(taskID)
-	if !ok {
+	handle, err := d.GetTaskHandle(taskID)
+	if err != nil {
 		return nil, drivers.ErrTaskNotFound
 	}
 	createRequest := api.ExecConfig{
@@ -855,8 +855,8 @@ func (d *Driver) ExecTask(taskID string, cmd []string, timeout time.Duration) (*
 // ExecTask function is used by the Nomad client to execute commands inside the task execution context.
 // i.E. nomad alloc exec ....
 func (d *Driver) ExecTaskStreaming(ctx context.Context, taskID string, execOptions *drivers.ExecOptions) (*drivers.ExitResult, error) {
-	handle, ok := d.tasks.Get(taskID)
-	if !ok {
+	handle, err := d.GetTaskHandle(taskID)
+	if err != nil {
 		return nil, drivers.ErrTaskNotFound
 	}
 
